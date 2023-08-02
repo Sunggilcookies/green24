@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'greenbooks/css/bootstrap.css' %}">
+    <meta charset="UTF-8">
+    <title>회원정보</title>
+    <style>
+        #box1{height:50px;}
+        a{text-decoration: none; color: black}
+
+    </style>
+</head>
+<body class="m-5">
+<div class="container text-center">
+    <div class="d-flex flex-row mb-5">
+        <div class="p-2 h3"><a href="{% url 'mypage:mypage' user.id %}">마이페이지</a></div>
+        <div class="p-2 mx-5"><a href="{% url 'mypage:memberinfo' user.id %}">회원정보</a></div>
+        <div class="p-2 mx-5"><a href="{% url 'mypage:mypost' %}">좋아하는글</a></div>
+        <div class="p-2 mx-5"><a href="{% url 'shopcart:detail' %}">장바구니</a></div>
+        <div class="p-2 mx-5"><a href="{% url 'mypage:memo_list' %}">메모장</a></div>
+        <div class="p-2 mx-5"><a href="{% url 'mypage:question' %}">고객상담</a></div>
+    </div>
+<div class="container px-4 py-5">
+    <section id="mypost">
+            <div id="title">
+                <h2 class="pb-2 border-bottom">좋아하는글</h2>
+                <h6 class="my-3">좋아요를 누른 게시물들이 모여있어요</h6>
+            </div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <td>제목</td>
+                        <td>작성자</td>
+                        <td>작성일</td>
+                        <td>조회</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if post_list %}
+                        {% for post in post_list %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'community:detail' post.id %}">
+                                    {{ post.title }}
+                                </a>
+                            </td>
+                            <td>{{ post.writer }}</td>
+                            <td>{{ post.create_date }}</td>
+                            <td>{{ post.views }}</td>
+                            <td>{{ post.likes }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">게시글이 없습니다.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </section>
+</div>
+</body>
+{% endblock %}

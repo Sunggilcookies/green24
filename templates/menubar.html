@@ -1,0 +1,149 @@
+{% load static %}
+<script>
+$(document).ready(function () {
+    var isOpen = false;
+    var testObjHeight = 80;
+    var expandedHeight = 360;
+    var tmp = parseInt($("#test_obj").css('top'));
+    var animationInProgress = false;
+
+    // 쿠키에서 메뉴 상태 확인
+    var menuState = getCookie("menuState");
+    if (menuState === "open") {
+        isOpen = true;
+        $("#up, #home, #cart, #kakao, #ocr").show();
+        testObjHeight = expandedHeight;
+    } else {
+        $("#up, #home, #cart, #kakao, #ocr").hide();
+        testObjHeight = 80;
+    }
+    $("#test_obj").height(testObjHeight);
+
+    $(window).scroll(function () {
+        var scrollTop = $(window).scrollTop();
+        var objPosition = scrollTop + tmp + "px";
+        if (!animationInProgress) {
+            $("#test_obj").css("top", objPosition);
+        }
+    });
+
+    $("#menu").click(function () {
+        if (animationInProgress) {
+            return;
+        }
+
+        isOpen = !isOpen;
+        animationInProgress = true;
+
+        if (isOpen) {
+            $("#up, #home, #cart, #kakao, #ocr").show();
+            testObjHeight = expandedHeight;
+            // 메뉴 상태를 쿠키에 저장
+            setCookie("menuState", "open", 7);
+        } else {
+            $("#up, #home, #cart, #kakao, #ocr").hide();
+            testObjHeight = 80;
+            // 메뉴 상태를 쿠키에서 제거
+            deleteCookie("menuState");
+        }
+
+        $("#test_obj").height(testObjHeight);
+        setTimeout(function () {
+            animationInProgress = false;
+        }, 500);
+    });
+
+    function goTop() {
+        $('html, body').animate({ scrollTop: 0 }, 100);
+    }
+
+    // 맨 위로 이동 버튼 클릭 이벤트
+    $("#up").click(function () {
+        goTop();
+    });
+
+    // 쿠키 설정 함수
+    function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    // 쿠키 가져오기 함수
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    // 쿠키 삭제 함수
+    function deleteCookie(name) {
+        document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
+});
+</script>
+<body>
+<div id="test_obj">
+    <header>
+        <nav>
+            <a href="#" id="menu" class="kakao-button" onclick="return false;"><img src="{% static 'greenbooks/images/menu.png' %}" class="sg_image" alt="menu"></a>
+            <a href="{% url 'index' %}" id="home" class="kakao-button"><img src="{% static 'greenbooks/images/home.png' %}" class="sg_image" alt="home"></a>
+            <a href="{% url 'price:checkbookprice' %}" id="ocr" class="kakao-button"><img src="{% static 'greenbooks/images/ocr.png' %}" class="sg_image" alt="home"></a>
+            <a href="{% url 'shopcart:detail' %}" id="cart" class="kakao-button"><img src="{% static 'greenbooks/images/cart.png' %}" class="sg_image" alt="cart"></a>
+            <a onclick="goTop()" id="up" class="up-button"><img src="{% static 'greenbooks/images/up.png' %}" class="sg_image" alt="맨 위로"></a>
+            <a href="http://pf.kakao.com/_xdBNAG" id="kakao" class="kakao-button" target="_blank"><img src="{% static 'greenbooks/images/kakao.png' %}" class="sg_image" alt="카카오"></a>
+        </nav>
+    </header>
+</div>
+</body>
+
+<style>
+    .sg_image {
+        width: 60px;
+        height: 60px;
+        padding: 5px;
+    }
+
+    .up-button,
+    .kakao-button {
+        background: none;
+        border: none;
+        text-align: center;
+    }
+
+    #test_obj {
+    filter: invert(100%);
+    background-color: #FB80FF;
+    position: absolute;
+    width: 60px;
+    height: 65px;
+    right: 150px;
+    border-radius: 70px;
+    top: 250px;
+    transition: height 0.5s ease;
+}
+
+    /* hover 효과 추가 */
+    #test_obj:hover {
+        background-color: #FD90FF;
+    }
+
+    @media (max-width: 1200px) {
+        #test_obj {
+            right: 80px;
+        }
+    }@media (max-width: 768px) {
+        #test_obj {
+            display: none;
+        }
+    }
+</style>
